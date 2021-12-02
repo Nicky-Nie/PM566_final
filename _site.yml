@@ -7,11 +7,13 @@ navbar:
       href: index.html
     - text: "Lab 12"
       href: 12-lab.html
+    - text: "data"
+      href: https://covidtracking.com/race
   right:
     - icon: fa-github fa-lg
       href: https://github.com/USCbiostats/PM566
-    - text: "PM566 Home"
-      href: https://elastic-khorana-70231e.netlify.app/
+    - text: "respository"
+      href: https://github.com/Nicky-Nie/PM566_final
 output:
   html_document:
     theme: cosmo
