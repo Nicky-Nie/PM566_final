@@ -75,5 +75,3 @@ p1_scatter
 ```{r echo=FALSE}
 p2_scatter
 ```
-
-{-}
