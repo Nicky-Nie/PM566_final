@@ -547,20 +547,6 @@ latest &lt;- latest[, highest_DR :=
 <p><img src="index_files/figure-html/country-1.png" width="700px" style="display: block; margin: auto;" /></p>
 <p>From this graph, we can see that the trend of all DR is gradually decreasing, the total death rate is always the lowest one since there are a lot of cases of other or unknown races which largely increase the denominator. And although death rate of white is higher than the other two races initially, they approach to the same level finally with a little bit of difference.</p>
 </div>
-<div id="covid-19-death-rate-of-different-races-in-california" class="section level2">
-<h2>COVID-19 Death rate of different races in California</h2>
-<pre class="r code-r"><code>ggplot(data = CA) + 
-  geom_smooth(mapping = aes(x = Date, y = DR_white, color = &quot;DR_white&quot;))+
-  geom_smooth(mapping = aes(x = Date, y = DR_black, color = &quot;DR_black&quot;))+
-  geom_smooth(mapping = aes(x = Date, y = DR_asian, color = &quot;DR_asian&quot;))+
-  geom_smooth(mapping = aes(x = Date, y = DR_total,color = &quot;DR_total&quot;))+
-  labs(x = &quot;Month&quot;, y = &quot;Death Rate&quot;)+
-  labs(title = &quot;COVID-19 Death rate of different races in California&quot;)+
-  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))+
-  scale_x_date(date_breaks = &quot;months&quot; , date_labels = &quot;%b-%y&quot;)</code></pre>
-<p><img src="index_files/figure-html/CA-1.png" width="700px" style="display: block; margin: auto;" /></p>
-<p>The general trend is similar to that of country but it seems that four lines go up slightly at last. But we can still see a trend of DR of three races approaching to the same level at the final stage of the data.</p>
-</div>
 <div id="death-rate-in-each-state" class="section level2">
 <h2>Death rate in each state</h2>
 <pre class="r code-r"><code>tab &lt;- latest[, .(
