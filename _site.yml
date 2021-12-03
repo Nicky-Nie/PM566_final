@@ -11,11 +11,9 @@ navbar:
       href: https://covidtracking.com/race
   right:
     - icon: fa-github fa-lg
-      href: https://github.com/USCbiostats/PM566
+      href: https://github.com/Nicky-Nie/PM566_final
     - text: "Download Report"
       href:
-    - text: "Respository"
-      href: https://github.com/Nicky-Nie/PM566_final
 output:
   html_document:
     theme: cosmo
