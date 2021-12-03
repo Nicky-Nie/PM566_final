@@ -9,7 +9,7 @@ output:
 
 <br>
 
-This is my PM566 Final Project website. I will showcase a few interactive visuals here.
+This is my PM566 Final Project website. I will showcase major finding in report here. Full report can be downloaded from the website.
 
 <br>
 
@@ -134,6 +134,7 @@ latest <- latest[, highest_DR :=
 
 
 # Preliminary Results
+## COVID-19 Death rate of different races in United States
 ```{r country}
 ggplot(data = race_country) + 
   geom_smooth(mapping = aes(x = Date, y = DR_white, color = "DR_white"))+
@@ -148,6 +149,7 @@ ggplot(data = race_country) +
 
 From this graph, we can see that the trend of all DR is gradually decreasing, the total death rate is always the lowest one since there are a lot of cases of other or unknown races which largely increase the denominator. And although death rate of white is higher than the other two races initially, they approach to the same level finally with a little bit of difference.
 
+## COVID-19 Death rate of different races in California
 ```{r CA}
 ggplot(data = CA) + 
   geom_smooth(mapping = aes(x = Date, y = DR_white, color = "DR_white"))+
@@ -162,6 +164,7 @@ ggplot(data = CA) +
 
 The general trend is similar to that of country but it seems that four lines go up slightly at last. But we can still see a trend of DR of three races approaching to the same level at the final stage of the data.
 
+## Death rate in each state
 ```{r}
 tab <- latest[, .(
   State = State,
@@ -186,6 +189,8 @@ latest <- merge(
 )
 ```
 
+## Death rate map
+### Total death rate (including TX)
 ```{r drtotal}
 pal = colorNumeric(c('green','red'), domain=latest$DR_total)
 leaflet() %>% 
@@ -202,6 +207,7 @@ leaflet() %>%
 latest <- latest[!State=="TX"]
 ```
 
+### Death rate of white
 ```{r drwhite}
 pal = colorNumeric(c('green','red'), domain=latest$DR_white)
 leaflet() %>% 
@@ -213,6 +219,7 @@ leaflet() %>%
     ) 
 ```
 
+### Death rate of black
 ```{r drblack}
 pal = colorNumeric(c('green','red'), domain=latest$DR_black)
 leaflet() %>% 
@@ -224,6 +231,7 @@ leaflet() %>%
     ) 
 ```
 
+### Death rate of asian
 ```{r drasian}
 pal = colorNumeric(c('green','red'), domain=latest$DR_asian)
 leaflet() %>% 

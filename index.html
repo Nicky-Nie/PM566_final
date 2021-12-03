@@ -408,7 +408,7 @@ div.tocify {
 
 
 <p><br></p>
-<p>This is my PM566 Final Project website. I will showcase a few interactive visuals here.</p>
+<p>This is my PM566 Final Project website. I will showcase major finding in report here. Full report can be downloaded from the website.</p>
 <p><br></p>
 <style type="text/css">
 .code-r { /* Code block */
@@ -534,6 +534,8 @@ latest &lt;- latest[, highest_DR :=
 </div>
 <div id="preliminary-results" class="section level1">
 <h1>Preliminary Results</h1>
+<div id="covid-19-death-rate-of-different-races-in-united-states" class="section level2">
+<h2>COVID-19 Death rate of different races in United States</h2>
 <pre class="r code-r"><code>ggplot(data = race_country) + 
   geom_smooth(mapping = aes(x = Date, y = DR_white, color = &quot;DR_white&quot;))+
   geom_smooth(mapping = aes(x = Date, y = DR_black, color = &quot;DR_black&quot;))+
@@ -545,6 +547,9 @@ latest &lt;- latest[, highest_DR :=
   scale_x_date(date_breaks = &quot;months&quot; , date_labels = &quot;%b-%y&quot;)</code></pre>
 <p><img src="index_files/figure-html/country-1.png" width="700px" style="display: block; margin: auto;" /></p>
 <p>From this graph, we can see that the trend of all DR is gradually decreasing, the total death rate is always the lowest one since there are a lot of cases of other or unknown races which largely increase the denominator. And although death rate of white is higher than the other two races initially, they approach to the same level finally with a little bit of difference.</p>
+</div>
+<div id="covid-19-death-rate-of-different-races-in-california" class="section level2">
+<h2>COVID-19 Death rate of different races in California</h2>
 <pre class="r code-r"><code>ggplot(data = CA) + 
   geom_smooth(mapping = aes(x = Date, y = DR_white, color = &quot;DR_white&quot;))+
   geom_smooth(mapping = aes(x = Date, y = DR_black, color = &quot;DR_black&quot;))+
@@ -556,6 +561,9 @@ latest &lt;- latest[, highest_DR :=
   scale_x_date(date_breaks = &quot;months&quot; , date_labels = &quot;%b-%y&quot;)</code></pre>
 <p><img src="index_files/figure-html/CA-1.png" width="700px" style="display: block; margin: auto;" /></p>
 <p>The general trend is similar to that of country but it seems that four lines go up slightly at last. But we can still see a trend of DR of three races approaching to the same level at the final stage of the data.</p>
+</div>
+<div id="death-rate-in-each-state" class="section level2">
+<h2>Death rate in each state</h2>
 <pre class="r code-r"><code>tab &lt;- latest[, .(
   State = State,
   DR_total = DR_total,
@@ -915,6 +923,11 @@ knitr::kable(tab)</code></pre>
   all.x = TRUE,
   all.y = FALSE
 )</code></pre>
+</div>
+<div id="death-rate-map" class="section level2">
+<h2>Death rate map</h2>
+<div id="total-death-rate-including-tx" class="section level3">
+<h3>Total death rate (including TX)</h3>
 <pre class="r code-r"><code>pal = colorNumeric(c(&#39;green&#39;,&#39;red&#39;), domain=latest$DR_total)
 leaflet() %&gt;% 
   addProviderTiles(&#39;CartoDB.Positron&#39;) %&gt;% 
@@ -926,6 +939,9 @@ leaflet() %&gt;%
 <div id="htmlwidget-e1a78b7e5636c417f191" style="width:700px;height:415.296px;" class="leaflet html-widget"></div>
 <script type="application/json" data-for="htmlwidget-e1a78b7e5636c417f191">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[61.3025006,32.6010112,34.7519275,34.1682185,37.2718745,38.9979339,41.5187835,38.8993487,39.145251,32.6781248,20.46,41.9383166,45.4945756,39.739318,39.7662195,38.4987789,37.8222935,30.9733766,42.0629398,38.8063524,45.2185133,44.9435598,46.4418595,38.3046615,32.5851062,46.6797995,35.2145629,41.5008195,44.0012306,40.1430058,34.1662325,38.502032,40.1903624,35.3097654,44.1419049,40.9945928,41.5827282,33.62505,44.2126995,35.830521,31.1693363,39.4997605,38.0033855,43.8717545,38.8993487,44.7862968,43.000325],[-158.7750198,-86.6807365,-92.1313784,-111.930907,-119.2704153,-105.550567,-72.757507,-77.0145666,-75.4189206,-83.2229757,-157.505,-93.389798,-114.1424303,-89.504139,-86.441277,-98.3200779,-85.7682399,-91.4299097,-71.718067,-77.2684162,-69.0148656,-86.4158049,-93.3655146,-92.437099,-89.8772196,-110.044783,-79.8912675,-99.680902,-71.5799231,-74.7311156,-106.0260685,-117.0230604,-82.6692525,-98.7165585,-120.5380993,-77.6046984,-71.5064508,-80.9470381,-100.2471641,-85.9785989,-100.0768425,-111.547028,-79.4587861,-72.4477828,-77.0145665,-89.8267049,-107.5545669],400,null,null,{"interactive":true,"className":"","stroke":true,"color":["#00FF00","#DB9000","#C4B000","#D89500","#BEB700","#B0C400","#F84400","#F06200","#C6AE00","#CBA800","#C1B400","#C4B100","#95D800","#D59A00","#D59B00","#C3B100","#9ED200","#E67C00","#FB3500","#DC8E00","#BDB800","#F25C00","#ADC700","#C8AC00","#E77800","#B0C500","#ACC800","#90DC00","#BDB800","#FF0000","#DB9000","#C8AC00","#CFA300","#92DB00","#B7BE00","#F35800","#D99400","#C6AE00","#C6AE00","#B8BD00","#C5AF00","#15FE00","#C4B000","#AACA00","#B7BE00","#9BD500","#A5CD00"],"weight":5,"opacity":1,"fill":true,"fillColor":["#00FF00","#DB9000","#C4B000","#D89500","#BEB700","#B0C400","#F84400","#F06200","#C6AE00","#CBA800","#C1B400","#C4B100","#95D800","#D59A00","#D59B00","#C3B100","#9ED200","#E67C00","#FB3500","#DC8E00","#BDB800","#F25C00","#ADC700","#C8AC00","#E77800","#B0C500","#ACC800","#90DC00","#BDB800","#FF0000","#DB9000","#C8AC00","#CFA300","#92DB00","#B7BE00","#F35800","#D99400","#C6AE00","#C6AE00","#B8BD00","#C5AF00","#15FE00","#C4B000","#AACA00","#B7BE00","#9BD500","#A5CD00"],"fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[20.46,61.3025006],"lng":[-158.7750198,-69.0148656]}},"evals":[],"jsHooks":[]}</script>
 <pre class="r code-r"><code>latest &lt;- latest[!State==&quot;TX&quot;]</code></pre>
+</div>
+<div id="death-rate-of-white" class="section level3">
+<h3>Death rate of white</h3>
 <pre class="r code-r"><code>pal = colorNumeric(c(&#39;green&#39;,&#39;red&#39;), domain=latest$DR_white)
 leaflet() %&gt;% 
   addProviderTiles(&#39;CartoDB.Positron&#39;) %&gt;% 
@@ -936,6 +952,9 @@ leaflet() %&gt;%
     ) </code></pre>
 <div id="htmlwidget-de6c2f8eb7dbe3ce3dec" style="width:700px;height:415.296px;" class="leaflet html-widget"></div>
 <script type="application/json" data-for="htmlwidget-de6c2f8eb7dbe3ce3dec">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[61.3025006,32.6010112,34.7519275,34.1682185,37.2718745,38.9979339,41.5187835,38.8993487,39.145251,32.6781248,20.46,41.9383166,45.4945756,39.739318,39.7662195,38.4987789,37.8222935,30.9733766,42.0629398,38.8063524,45.2185133,44.9435598,46.4418595,38.3046615,32.5851062,46.6797995,35.2145629,41.5008195,44.0012306,40.1430058,34.1662325,38.502032,40.1903624,35.3097654,44.1419049,40.9945928,41.5827282,33.62505,44.2126995,35.830521,39.4997605,38.0033855,43.8717545,38.8993487,44.7862968,43.000325],[-158.7750198,-86.6807365,-92.1313784,-111.930907,-119.2704153,-105.550567,-72.757507,-77.0145666,-75.4189206,-83.2229757,-157.505,-93.389798,-114.1424303,-89.504139,-86.441277,-98.3200779,-85.7682399,-91.4299097,-71.718067,-77.2684162,-69.0148656,-86.4158049,-93.3655146,-92.437099,-89.8772196,-110.044783,-79.8912675,-99.680902,-71.5799231,-74.7311156,-106.0260685,-117.0230604,-82.6692525,-98.7165585,-120.5380993,-77.6046984,-71.5064508,-80.9470381,-100.2471641,-85.9785989,-111.547028,-79.4587861,-72.4477828,-77.0145665,-89.8267049,-107.5545669],400,null,null,{"interactive":true,"className":"","stroke":true,"color":["#32FB00","#BABB00","#98D700","#B0C500","#BDB800","#9DD300","#FF0000","#58F300","#A9CA00","#B6BF00","#62F000","#AEC600","#8DDE00","#AFC500","#98D700","#8DDD00","#77E800","#B1C400","#F25B00","#BDB800","#87E100","#BBBA00","#87E100","#9AD600","#AFC500","#75E900","#85E200","#72EB00","#B6BF00","#E77A00","#C7AD00","#ACC800","#AFC500","#74EA00","#98D700","#D69800","#BEB700","#97D700","#8DDD00","#8EDD00","#00FF00","#ADC700","#7BE600","#CFA300","#70EB00","#9ED200"],"weight":5,"opacity":1,"fill":true,"fillColor":["#32FB00","#BABB00","#98D700","#B0C500","#BDB800","#9DD300","#FF0000","#58F300","#A9CA00","#B6BF00","#62F000","#AEC600","#8DDE00","#AFC500","#98D700","#8DDD00","#77E800","#B1C400","#F25B00","#BDB800","#87E100","#BBBA00","#87E100","#9AD600","#AFC500","#75E900","#85E200","#72EB00","#B6BF00","#E77A00","#C7AD00","#ACC800","#AFC500","#74EA00","#98D700","#D69800","#BEB700","#97D700","#8DDD00","#8EDD00","#00FF00","#ADC700","#7BE600","#CFA300","#70EB00","#9ED200"],"fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[20.46,61.3025006],"lng":[-158.7750198,-69.0148656]}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="death-rate-of-black" class="section level3">
+<h3>Death rate of black</h3>
 <pre class="r code-r"><code>pal = colorNumeric(c(&#39;green&#39;,&#39;red&#39;), domain=latest$DR_black)
 leaflet() %&gt;% 
   addProviderTiles(&#39;CartoDB.Positron&#39;) %&gt;% 
@@ -946,6 +965,9 @@ leaflet() %&gt;%
     ) </code></pre>
 <div id="htmlwidget-a92715a237dd1892d622" style="width:700px;height:415.296px;" class="leaflet html-widget"></div>
 <script type="application/json" data-for="htmlwidget-a92715a237dd1892d622">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[61.3025006,32.6010112,34.7519275,34.1682185,37.2718745,38.9979339,41.5187835,38.8993487,39.145251,32.6781248,20.46,41.9383166,45.4945756,39.739318,39.7662195,38.4987789,37.8222935,30.9733766,42.0629398,38.8063524,45.2185133,44.9435598,46.4418595,38.3046615,32.5851062,46.6797995,35.2145629,41.5008195,44.0012306,40.1430058,34.1662325,38.502032,40.1903624,35.3097654,44.1419049,40.9945928,41.5827282,33.62505,44.2126995,35.830521,39.4997605,38.0033855,43.8717545,38.8993487,44.7862968,43.000325],[-158.7750198,-86.6807365,-92.1313784,-111.930907,-119.2704153,-105.550567,-72.757507,-77.0145666,-75.4189206,-83.2229757,-157.505,-93.389798,-114.1424303,-89.504139,-86.441277,-98.3200779,-85.7682399,-91.4299097,-71.718067,-77.2684162,-69.0148656,-86.4158049,-93.3655146,-92.437099,-89.8772196,-110.044783,-79.8912675,-99.680902,-71.5799231,-74.7311156,-106.0260685,-117.0230604,-82.6692525,-98.7165585,-120.5380993,-77.6046984,-71.5064508,-80.9470381,-100.2471641,-85.9785989,-111.547028,-79.4587861,-72.4477828,-77.0145665,-89.8267049,-107.5545669],400,null,null,{"interactive":true,"className":"","stroke":true,"color":["#58F300","#C5AF00","#9AD600","#A0D100","#CDA500","#98D700","#F35A00","#E38100","#9FD200","#BEB700","#61F000","#8EDD00","#73EA00","#D79700","#B2C300","#9ED200","#91DB00","#C7AD00","#CFA200","#BEB700","#44F800","#F74600","#6DED00","#C1B400","#C7AD00","#00FF00","#A6CD00","#83E300","#8BDE00","#FF0000","#B1C400","#B1C400","#B2C200","#86E100","#88E000","#DB9000","#8FDC00","#B7BE00","#22FD00","#ACC800","#36FB00","#B8BD00","#2FFC00","#96D800","#86E100","#48F700"],"weight":5,"opacity":1,"fill":true,"fillColor":["#58F300","#C5AF00","#9AD600","#A0D100","#CDA500","#98D700","#F35A00","#E38100","#9FD200","#BEB700","#61F000","#8EDD00","#73EA00","#D79700","#B2C300","#9ED200","#91DB00","#C7AD00","#CFA200","#BEB700","#44F800","#F74600","#6DED00","#C1B400","#C7AD00","#00FF00","#A6CD00","#83E300","#8BDE00","#FF0000","#B1C400","#B1C400","#B2C200","#86E100","#88E000","#DB9000","#8FDC00","#B7BE00","#22FD00","#ACC800","#36FB00","#B8BD00","#2FFC00","#96D800","#86E100","#48F700"],"fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[20.46,61.3025006],"lng":[-158.7750198,-69.0148656]}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="death-rate-of-asian" class="section level3">
+<h3>Death rate of asian</h3>
 <pre class="r code-r"><code>pal = colorNumeric(c(&#39;green&#39;,&#39;red&#39;), domain=latest$DR_asian)
 leaflet() %&gt;% 
   addProviderTiles(&#39;CartoDB.Positron&#39;) %&gt;% 
@@ -956,6 +978,8 @@ leaflet() %&gt;%
     ) </code></pre>
 <div id="htmlwidget-49d0d6403862c9ba4bae" style="width:700px;height:415.296px;" class="leaflet html-widget"></div>
 <script type="application/json" data-for="htmlwidget-49d0d6403862c9ba4bae">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[61.3025006,32.6010112,34.7519275,34.1682185,37.2718745,38.9979339,41.5187835,38.8993487,39.145251,32.6781248,20.46,41.9383166,45.4945756,39.739318,39.7662195,38.4987789,37.8222935,30.9733766,42.0629398,38.8063524,45.2185133,44.9435598,46.4418595,38.3046615,32.5851062,46.6797995,35.2145629,41.5008195,44.0012306,40.1430058,34.1662325,38.502032,40.1903624,35.3097654,44.1419049,40.9945928,41.5827282,33.62505,44.2126995,35.830521,39.4997605,38.0033855,43.8717545,38.8993487,44.7862968,43.000325],[-158.7750198,-86.6807365,-92.1313784,-111.930907,-119.2704153,-105.550567,-72.757507,-77.0145666,-75.4189206,-83.2229757,-157.505,-93.389798,-114.1424303,-89.504139,-86.441277,-98.3200779,-85.7682399,-91.4299097,-71.718067,-77.2684162,-69.0148656,-86.4158049,-93.3655146,-92.437099,-89.8772196,-110.044783,-79.8912675,-99.680902,-71.5799231,-74.7311156,-106.0260685,-117.0230604,-82.6692525,-98.7165585,-120.5380993,-77.6046984,-71.5064508,-80.9470381,-100.2471641,-85.9785989,-111.547028,-79.4587861,-72.4477828,-77.0145665,-89.8267049,-107.5545669],400,null,null,{"interactive":true,"className":"","stroke":true,"color":["#95D900","#8BDE00","#99D600","#BBBA00","#ED6A00","#B8BD00","#DE8B00","#ABC900","#5CF200","#B2C300","#FF0000","#B8BD00","#A3CF00","#DD8D00","#72EA00","#93DA00","#60F100","#43F800","#D89500","#E97400","#5CF200","#B5C000","#97D800","#ACC800","#9BD500","#00FF00","#7CE600","#8CDE00","#93DA00","#FC2C00","#AEC600","#D49C00","#89DF00","#6CED00","#96D800","#D0A200","#ADC700","#8ADF00","#8EDD00","#84E200","#78E800","#B3C200","#66EF00","#E77900","#76E900","#C8AC00"],"weight":5,"opacity":1,"fill":true,"fillColor":["#95D900","#8BDE00","#99D600","#BBBA00","#ED6A00","#B8BD00","#DE8B00","#ABC900","#5CF200","#B2C300","#FF0000","#B8BD00","#A3CF00","#DD8D00","#72EA00","#93DA00","#60F100","#43F800","#D89500","#E97400","#5CF200","#B5C000","#97D800","#ACC800","#9BD500","#00FF00","#7CE600","#8CDE00","#93DA00","#FC2C00","#AEC600","#D49C00","#89DF00","#6CED00","#96D800","#D0A200","#ADC700","#8ADF00","#8EDD00","#84E200","#78E800","#B3C200","#66EF00","#E77900","#76E900","#C8AC00"],"fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[20.46,61.3025006],"lng":[-158.7750198,-69.0148656]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
