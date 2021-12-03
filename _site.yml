@@ -7,14 +7,14 @@ navbar:
       href: index.html
     - text: "Lab 12"
       href: 12-lab.html
-    - text: "data"
+    - text: "Data"
       href: https://covidtracking.com/race
   right:
     - icon: fa-github fa-lg
       href: https://github.com/USCbiostats/PM566
-    - text: "download full report"
+    - text: "Download Report"
       href:
-    - text: "respository"
+    - text: "Respository"
       href: https://github.com/Nicky-Nie/PM566_final
 output:
   html_document:
