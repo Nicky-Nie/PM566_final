@@ -420,26 +420,11 @@ div.tocify {
 }
 </style>
 <p><br></p>
-<div id="introduction" class="section level1">
-<h1>Introduction</h1>
+<div id="introduction-of-dataset" class="section level1">
+<h1>Introduction of dataset</h1>
 <p>This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/deaths of COVID-19 catrgotized by races for each state in United States. The data was collected from April 12, 2020 to March 07, 2021.</p>
 <div id="main-question-is-death-from-covid-19-associated-with-races" class="section level2">
 <h2>Main Question: Is death from COVID-19 associated with races?</h2>
-<div id="sub-questions" class="section level4">
-<h4>Sub Questions:</h4>
-</div>
-<div id="are-the-trends-of-incidencedeath-of-different-races-same-across-the-year-in-the-country-level" class="section level4">
-<h4>1.Are the trends of incidence/death of different races same across the year in the country level?</h4>
-</div>
-<div id="is-the-trend-in-ca-similar-to-that-in-the-country-level" class="section level4">
-<h4>2.Is the trend in CA similar to that in the country level?</h4>
-</div>
-<div id="what-are-top-5-states-with-highest-death-rate-from-covid-19-for-different-races" class="section level4">
-<h4>3.What are top 5 states with highest death rate from COVID-19 for different races?</h4>
-</div>
-<div id="which-race-with-highest-death-rate-in-each-state" class="section level4">
-<h4>4.Which race with highest death rate in each state?</h4>
-</div>
 </div>
 </div>
 <div id="method" class="section level1">
@@ -571,14 +556,6 @@ latest &lt;- latest[, highest_DR :=
   scale_x_date(date_breaks = &quot;months&quot; , date_labels = &quot;%b-%y&quot;)</code></pre>
 <p><img src="index_files/figure-html/CA-1.png" width="700px" style="display: block; margin: auto;" /></p>
 <p>The general trend is similar to that of country but it seems that four lines go up slightly at last. But we can still see a trend of DR of three races approaching to the same level at the final stage of the data.</p>
-<pre class="r code-r"><code>top5_total &lt;- latest[order(DR_total,decreasing = TRUE)][1:5]
-top5_white &lt;- latest[order(DR_white,decreasing = TRUE)][1:5]
-top5_black &lt;- latest[order(DR_black,decreasing = TRUE)][1:5]
-top5_asian &lt;- latest[order(DR_asian,decreasing = TRUE)][1:5]</code></pre>
-<p>The top5 states with highest death rate of total are NJ, MA, CT, PA, MI</p>
-<p>The top5 states with highest death rate of white are TX, CT, MA, NJ, PA</p>
-<p>The top5 states with highest death rate of black are TX, NJ, MI, CT, DC</p>
-<p>The top5 states with highest death rate of asian are TX, HI, NJ, CA, MD</p>
 <pre class="r code-r"><code>tab &lt;- latest[, .(
   State = State,
   DR_total = DR_total,
@@ -930,48 +907,7 @@ knitr::kable(tab)</code></pre>
 </tr>
 </tbody>
 </table>
-<pre class="r code-r"><code>tab &lt;- latest[, .(
-  N_states  = .N,
-  avg_DR_white = mean(DR_white),
-  avg_DR_black = mean(DR_black),
-  avg_DR_asian = mean(DR_asian)
-), by = highest_DR]
-
-knitr::kable(tab)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">highest_DR</th>
-<th align="right">N_states</th>
-<th align="right">avg_DR_white</th>
-<th align="right">avg_DR_black</th>
-<th align="right">avg_DR_asian</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Asian</td>
-<td align="right">6</td>
-<td align="right">0.1330899</td>
-<td align="right">0.0676491</td>
-<td align="right">0.1811356</td>
-</tr>
-<tr class="even">
-<td align="left">White</td>
-<td align="right">30</td>
-<td align="right">0.0249392</td>
-<td align="right">0.0159199</td>
-<td align="right">0.0143990</td>
-</tr>
-<tr class="odd">
-<td align="left">Black</td>
-<td align="right">11</td>
-<td align="right">0.0236851</td>
-<td align="right">0.0304532</td>
-<td align="right">0.0152750</td>
-</tr>
-</tbody>
-</table>
+<p>Looking back to the table of death rate in each state, I find that Texas has a ridiculous result in death rate of white(0.7144365) death rate of black(0.3355429) and death rate of asian (0.9624866), which is abnormally high. So I think that there must be some problems in this data and hence I delete the data of Texas when I draw the map.</p>
 <pre class="r code-r"><code>latest &lt;- merge(
   x     = latest,
   y     = state_map,
@@ -989,7 +925,6 @@ leaflet() %&gt;%
     ) </code></pre>
 <div id="htmlwidget-e1a78b7e5636c417f191" style="width:700px;height:415.296px;" class="leaflet html-widget"></div>
 <script type="application/json" data-for="htmlwidget-e1a78b7e5636c417f191">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[61.3025006,32.6010112,34.7519275,34.1682185,37.2718745,38.9979339,41.5187835,38.8993487,39.145251,32.6781248,20.46,41.9383166,45.4945756,39.739318,39.7662195,38.4987789,37.8222935,30.9733766,42.0629398,38.8063524,45.2185133,44.9435598,46.4418595,38.3046615,32.5851062,46.6797995,35.2145629,41.5008195,44.0012306,40.1430058,34.1662325,38.502032,40.1903624,35.3097654,44.1419049,40.9945928,41.5827282,33.62505,44.2126995,35.830521,31.1693363,39.4997605,38.0033855,43.8717545,38.8993487,44.7862968,43.000325],[-158.7750198,-86.6807365,-92.1313784,-111.930907,-119.2704153,-105.550567,-72.757507,-77.0145666,-75.4189206,-83.2229757,-157.505,-93.389798,-114.1424303,-89.504139,-86.441277,-98.3200779,-85.7682399,-91.4299097,-71.718067,-77.2684162,-69.0148656,-86.4158049,-93.3655146,-92.437099,-89.8772196,-110.044783,-79.8912675,-99.680902,-71.5799231,-74.7311156,-106.0260685,-117.0230604,-82.6692525,-98.7165585,-120.5380993,-77.6046984,-71.5064508,-80.9470381,-100.2471641,-85.9785989,-100.0768425,-111.547028,-79.4587861,-72.4477828,-77.0145665,-89.8267049,-107.5545669],400,null,null,{"interactive":true,"className":"","stroke":true,"color":["#00FF00","#DB9000","#C4B000","#D89500","#BEB700","#B0C400","#F84400","#F06200","#C6AE00","#CBA800","#C1B400","#C4B100","#95D800","#D59A00","#D59B00","#C3B100","#9ED200","#E67C00","#FB3500","#DC8E00","#BDB800","#F25C00","#ADC700","#C8AC00","#E77800","#B0C500","#ACC800","#90DC00","#BDB800","#FF0000","#DB9000","#C8AC00","#CFA300","#92DB00","#B7BE00","#F35800","#D99400","#C6AE00","#C6AE00","#B8BD00","#C5AF00","#15FE00","#C4B000","#AACA00","#B7BE00","#9BD500","#A5CD00"],"weight":5,"opacity":1,"fill":true,"fillColor":["#00FF00","#DB9000","#C4B000","#D89500","#BEB700","#B0C400","#F84400","#F06200","#C6AE00","#CBA800","#C1B400","#C4B100","#95D800","#D59A00","#D59B00","#C3B100","#9ED200","#E67C00","#FB3500","#DC8E00","#BDB800","#F25C00","#ADC700","#C8AC00","#E77800","#B0C500","#ACC800","#90DC00","#BDB800","#FF0000","#DB9000","#C8AC00","#CFA300","#92DB00","#B7BE00","#F35800","#D99400","#C6AE00","#C6AE00","#B8BD00","#C5AF00","#15FE00","#C4B000","#AACA00","#B7BE00","#9BD500","#A5CD00"],"fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[20.46,61.3025006],"lng":[-158.7750198,-69.0148656]}},"evals":[],"jsHooks":[]}</script>
-<p>Looking back to the table of death rate in each state, I find that Texas has a ridiculous result in death rate of white(0.7144365) death rate of black(0.3355429) and death rate of asian (0.9624866), which is abnormally high. So I think that there must be some problems in this data and hence I delete the data of Texas when I draw the map.</p>
 <pre class="r code-r"><code>latest &lt;- latest[!State==&quot;TX&quot;]</code></pre>
 <pre class="r code-r"><code>pal = colorNumeric(c(&#39;green&#39;,&#39;red&#39;), domain=latest$DR_white)
 leaflet() %&gt;% 
