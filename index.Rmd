@@ -13,13 +13,15 @@ This is my PM566 Final Project website. I will showcase major finding in report 
 
 <br>
 
-```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
+```{r setup, message=FALSE, echo=FALSE, warning=FALSE, results='hide'}
 
 library(data.table)
 library(dplyr)
 library(tidyverse)
 library(ggforce)
 library(leaflet)
+library(plotly)
+library(usmap)
 
 # Initialize code chunk options
 opts_chunk$set(
@@ -59,17 +61,14 @@ This dataset is a collaboration between the COVID Tracking Project and the Bosto
 
 ### Download data
 I download data in csv form from The COVID Tracking Project https://covidtracking.com/race
-And dataset of latitude and longitude of each state is download from kaggle
-https://www.kaggle.com/washimahmed/usa-latlong-for-state-abbreviations
-```{r download}
+```{r message=FALSE, echo=FALSE, warning=FALSE, results='hide',fig.show='hide'}
 race <- fread("CRDT.csv")
-state_map <- fread("statelatlong.csv")
 ```
 
 
 ### Preprocessing data
 
-```{r look at NAs}
+```{r message=FALSE, echo=FALSE, warning=FALSE}
 tab <- race[, .(
 Total_objects = nrow(race),
 NA_total = sum(is.na(race$Cases_Total)),
@@ -89,7 +88,7 @@ Based on this table, I decided to take a close look at data of Total, White, Bla
 
 I think racial inequality may contribute to the huge number of missing data in minority groups. Some states may think that few people care about data from minority groups and are not willing to devote much attention and labor force to collect data from them. Or the population of those minority groups in those states are too small, hence they ignored it.
 
-```{r preprocess, warning=FALSE}
+```{r message=FALSE, echo=FALSE, warning=FALSE, results='hide',fig.show='hide'}
 # pick up interested variables
 race_state <- unique(race[,.(Date,State,Cases_Total,Cases_White,Cases_Black,Cases_Asian,Deaths_Total,Deaths_White,Deaths_Black,Deaths_Asian)])
 # since date here shows to be integer, I changed them into str
@@ -136,22 +135,24 @@ Because of different population base in each state, the original counts of death
 
 # Preliminary Results
 ## COVID-19 Death rate of different races in United States
-```{r country}
+
+```{r message=FALSE, echo=FALSE, warning=FALSE}
 ggplot(data = race_country) + 
   geom_smooth(mapping = aes(x = Date, y = DR_white, color = "DR_white"))+
   geom_smooth(mapping = aes(x = Date, y = DR_black, color = "DR_black"))+
   geom_smooth(mapping = aes(x = Date, y = DR_asian, color = "DR_asian"))+
   geom_smooth(mapping = aes(x = Date, y = DR_total,color = "DR_total"))+
-  labs(x = "Month", y = "Death Rate")+
+  labs(x = "Date", y = "Death Rate")+
   labs(title = "COVID-19 Death rate of different races in United States")+
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))+
   scale_x_date(date_breaks = "months" , date_labels = "%b-%y")
+
 ```
 
 From this graph, we can see that the trend of all DR is gradually decreasing, the total death rate is always the lowest one since there are a lot of cases of other or unknown races which largely increase the denominator. And although death rate of white is higher than the other two races initially, they approach to the same level finally with a little bit of difference.
 
 ## Death rate in each state
-```{r}
+```{r message=FALSE, echo=FALSE, warning=FALSE}
 tab <- latest[, .(
   State = State,
   DR_total = DR_total,
@@ -165,70 +166,99 @@ knitr::kable(tab)
 
 Looking back to the table of death rate in each state, I find that Texas has a ridiculous result in death rate of white(0.7144365) death rate of black(0.3355429) and death rate of asian	(0.9624866), which is abnormally high. So I think that there must be some problems in this data and hence I delete the data of Texas when I draw the map.
 
-```{r merge}
-latest <- merge(
-  x     = latest,
-  y     = state_map,
-  by  = "State",
-  all.x = TRUE,
-  all.y = FALSE
+## Death rate map{.tabset}
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, results='hide',fig.show='hide'}
+set_map <- list(
+  scope = 'usa',
+  projection = list(type = 'conic')
 )
+latest$hover <- with(latest, paste('<br>', "Total death rate in ", State, '<br>', "is ", DR_total))
+DR_total <- plot_geo(latest, locationmode = 'USA-states') %>% 
+        add_trace(
+          z = ~DR_total, text=~hover, locations = ~State,
+          color=~DR_total, colors='Greens'
+          ) %>%
+        colorbar(title = "Death Rate of COVID-19")%>%
+        layout(title="Total Death Rate of COVID-19 in Each State",
+               geo=set_map)
 ```
 
-## Death rate map
-### Total death rate (including TX)
-```{r drtotal}
-pal = colorNumeric(c('green','red'), domain=latest$DR_total)
-leaflet() %>% 
-  addProviderTiles('CartoDB.Positron') %>% 
-  addCircles(
-    data = latest,
-    lat = ~Latitude, lng = ~Longitude, 
-    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(latest$DR_total)
-    ) 
+```{r message=FALSE, echo=FALSE, warning=FALSE, results='hide',fig.show='hide'}
+latest2 <- latest[!State=="TX"]
 ```
 
+```{r message=FALSE, echo=FALSE, warning=FALSE, results='hide',fig.show='hide'}
+set_map <- list(
+  scope = 'usa',
+  projection = list(type = 'conic')
+)
+latest2$hover <- with(latest2, paste('<br>', "Death rate of White in ", State, '<br>', "is ", DR_white))
+p1 <- plot_geo(latest2, locationmode = 'USA-states') %>% 
+        add_trace(
+          z = ~DR_white, text=~hover, locations = ~State,
+          color=~DR_white, colors='Reds'
+          ) %>%
+        colorbar(title = "Death Rate in Black of COVID-19")%>%
+        layout(title="Death Rate in White of COVID-19 in Each State",
+               geo=set_map)
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, results='hide',fig.show='hide'}
+set_map <- list(
+  scope = 'usa',
+  projection = list(type = 'conic')
+)
+latest2$hover <- with(latest2, paste('<br>', "Death rate of Black in ", State, '<br>', "is ", DR_black))
+p2 <- plot_geo(latest2, locationmode = 'USA-states') %>% 
+        add_trace(
+          z = ~DR_black, text=~hover, locations = ~State,
+          color=~DR_black, colors='Blues'
+          ) %>%
+        colorbar(title = "Death Rate in Black of COVID-19")%>%
+        layout(title="Death Rate in Black of COVID-19 in Each State",
+               geo=set_map)
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, results='hide',fig.show='hide'}
+set_map <- list(
+  scope = 'usa',
+  projection = list(type = 'conic')
+)
+latest2$hover <- with(latest2, paste('<br>', "Death rate of Asian in ", State, '<br>', "is ", DR_asian))
+p3 <- plot_geo(latest2, locationmode = 'USA-states') %>% 
+        add_trace(
+          z = ~DR_asian, text=~hover, locations = ~State,
+          color=~DR_asian, colors='Purples'
+          ) %>%
+        colorbar(title = "Death Rate in Asian of COVID-19")%>%
+        layout(title="Death Rate in Asian of COVID-19 in Each State",
+               geo=set_map)
+```
+
+### Total Death Rate
+```{r message=FALSE, echo=FALSE, warning=FALSE}
+DR_total
+```
+
+### Death Rate White
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
+p1
+```
+
+### Death Rate Black
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
+p2
+```
+
+
+### Death Rate Asian
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
+p3
+```
+
+## {-}
 Generally it shows a radial pattern: the middle part has a lowest death rate and gradually become higher while approching to the coastline. And total death rate of the eastern and north-eastern area is highest. Relatively higher population and more samples of those states along the coastline may lead to greater burden of medical system, and finally lead to a higher death rate. Also, there are more international transportation for those states along the coastline, which may bring in more cases and deaths of COVID-19.
-
-```{r remove TX}
-latest <- latest[!State=="TX"]
-```
-
-### Death rate of white
-```{r drwhite}
-pal = colorNumeric(c('green','red'), domain=latest$DR_white)
-leaflet() %>% 
-  addProviderTiles('CartoDB.Positron') %>% 
-  addCircles(
-    data = latest,
-    lat = ~Latitude, lng = ~Longitude, 
-    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(latest$DR_white)
-    ) 
-```
-
-### Death rate of black
-```{r drblack}
-pal = colorNumeric(c('green','red'), domain=latest$DR_black)
-leaflet() %>% 
-  addProviderTiles('CartoDB.Positron') %>% 
-  addCircles(
-    data = latest,
-    lat = ~Latitude, lng = ~Longitude, 
-    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(latest$DR_black)
-    ) 
-```
-
-### Death rate of asian
-```{r drasian}
-pal = colorNumeric(c('green','red'), domain=latest$DR_asian)
-leaflet() %>% 
-  addProviderTiles('CartoDB.Positron') %>% 
-  addCircles(
-    data = latest,
-    lat = ~Latitude, lng = ~Longitude, 
-    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(latest$DR_asian)
-    ) 
-```
 
 The patterns of death rate in those three maps with different races are similar to the pattern of total death rate. The difference such as high death rate of black in Michigan, high death rate of asian in California and Hawaii is caused by relatively higher population of such races in those states, which provides more data.
 
