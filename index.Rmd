@@ -50,7 +50,6 @@ opts_chunk$set(
 # Introduction
 This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/deaths of COVID-19 catrgotized by races for each state in United States. The data was collected from April 12, 2020 to March 07, 2021. 
 
-<br>
 
 ## Main Question: Is death from COVID-19 associated with races?
 
@@ -60,11 +59,9 @@ This dataset is a collaboration between the COVID Tracking Project and the Bosto
 #### 3.What are top 5 states with highest death rate from COVID-19 for different races?
 #### 4.Which race with highest death rate in each state?
 
-<br>
 
 # Method
 
-<br>
 
 ### Download data
 I download data in csv form from The COVID Tracking Project https://covidtracking.com/race
@@ -75,7 +72,6 @@ race <- fread("CRDT.csv")
 state_map <- fread("statelatlong.csv")
 ```
 
-<br>
 
 ### Preprocessing data
 
@@ -94,7 +90,6 @@ NA_multi = sum(is.na(race$Cases_Multiracial))
 knitr::kable(tab)
 ```
 
-<br>
 
 Based on this table, I decided to take a close look at data of Total, White, Black and Asian since races like Latinx, AIAN, NHPI and multiracial have almost half of missing data, which is not suitable for further analysis. And for the three races categories left, I dropped all the NAs for further analysis. 
 
@@ -143,7 +138,6 @@ latest <- latest[, highest_DR :=
           )), by = State]
 ```
 
-<br>
 
 # Preliminary Results
 ```{r country}
@@ -274,7 +268,6 @@ leaflet() %>%
     ) 
 ```
 
-<br>
 
 # Conclusion
 Just from these data, I think there is no clear association between races and death rate of COVID-19. Both in CA and country level, the death rate of all three races approach to the same level finally. And for top5 states with highest death rate in each race, TX is top1 of all three races and MA, NJ, CT, PA, MI also appear more than one time. Hence, in my opinion, the death rate is highly depend on the action of the State rather than races, for example, the burden of medical system, the policy to restrict COVID-19 etc. Although the number of states with DR_white to be the highest DR among three races is greatest (30), the difference among average DR is not that so great. This probably is caused by samples collection. The majority of United States population is white, hence the data collected in white might be greater, leading to a relatively higher DR.
