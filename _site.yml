@@ -12,6 +12,8 @@ navbar:
   right:
     - icon: fa-github fa-lg
       href: https://github.com/USCbiostats/PM566
+    - text: "download full report"
+      href:
     - text: "respository"
       href: https://github.com/Nicky-Nie/PM566_final
 output:
