@@ -47,17 +47,11 @@ opts_chunk$set(
 
 <br>
 
-# Introduction
+# Introduction of dataset
 This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/deaths of COVID-19 catrgotized by races for each state in United States. The data was collected from April 12, 2020 to March 07, 2021. 
 
 
 ## Main Question: Is death from COVID-19 associated with races?
-
-#### Sub Questions:
-#### 1.Are the trends of incidence/death of different races same across the year in the country level?
-#### 2.Is the trend in CA similar to that in the country level?
-#### 3.What are top 5 states with highest death rate from COVID-19 for different races?
-#### 4.Which race with highest death rate in each state?
 
 
 # Method
@@ -168,21 +162,6 @@ ggplot(data = CA) +
 
 The general trend is similar to that of country but it seems that four lines go up slightly at last. But we can still see a trend of DR of three races approaching to the same level at the final stage of the data.
 
-```{r top5}
-top5_total <- latest[order(DR_total,decreasing = TRUE)][1:5]
-top5_white <- latest[order(DR_white,decreasing = TRUE)][1:5]
-top5_black <- latest[order(DR_black,decreasing = TRUE)][1:5]
-top5_asian <- latest[order(DR_asian,decreasing = TRUE)][1:5]
-```
-
-The top5 states with highest death rate of total are  `r top5_total$State`
-
-The top5 states with highest death rate of white are  `r top5_white$State`
-
-The top5 states with highest death rate of black are  `r top5_black$State`
-
-The top5 states with highest death rate of asian are  `r top5_asian$State`
-
 ```{r}
 tab <- latest[, .(
   State = State,
@@ -195,16 +174,7 @@ tab <- latest[, .(
 knitr::kable(tab)
 ```
 
-```{r table}
-tab <- latest[, .(
-  N_states  = .N,
-  avg_DR_white = mean(DR_white),
-  avg_DR_black = mean(DR_black),
-  avg_DR_asian = mean(DR_asian)
-), by = highest_DR]
-
-knitr::kable(tab)
-```
+Looking back to the table of death rate in each state, I find that Texas has a ridiculous result in death rate of white(0.7144365) death rate of black(0.3355429) and death rate of asian	(0.9624866), which is abnormally high. So I think that there must be some problems in this data and hence I delete the data of Texas when I draw the map.
 
 ```{r merge}
 latest <- merge(
@@ -215,8 +185,6 @@ latest <- merge(
   all.y = FALSE
 )
 ```
-
-
 
 ```{r drtotal}
 pal = colorNumeric(c('green','red'), domain=latest$DR_total)
@@ -229,7 +197,6 @@ leaflet() %>%
     ) 
 ```
 
-Looking back to the table of death rate in each state, I find that Texas has a ridiculous result in death rate of white(0.7144365) death rate of black(0.3355429) and death rate of asian	(0.9624866), which is abnormally high. So I think that there must be some problems in this data and hence I delete the data of Texas when I draw the map.
 
 ```{r remove TX}
 latest <- latest[!State=="TX"]
