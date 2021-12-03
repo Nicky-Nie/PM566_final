@@ -48,7 +48,7 @@ opts_chunk$set(
 <br>
 
 # Introduction of dataset
-This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/deaths of COVID-19 catrgotized by races for each state in United States. The data was collected from April 12, 2020 to March 07, 2021. 
+This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/deaths of COVID-19 categorized by races for each state in United States. The data was collected from April 12, 2020 to March 07, 2021. 
 
 
 ## Main Question: Is death from COVID-19 associated with races?
@@ -87,7 +87,7 @@ knitr::kable(tab)
 
 Based on this table, I decided to take a close look at data of Total, White, Black and Asian since races like Latinx, AIAN, NHPI and multiracial have almost half of missing data, which is not suitable for further analysis. And for the three races categories left, I dropped all the NAs for further analysis. 
 
-I firstly created two new datasets, one is based on state(race_state) and another(race_country) is based on country. Then I calculated death rates based on races of each dataset. I also created a dataset of CA to see if pattern in CA is similar to the pattern of the whole country. And since the number of cases and deaths are cumulative, I chose the latest data(2021.03.07) and created a new dataset called "latest" to find the race with highest death rate in each state.
+I think racial inequality may contribute to the huge number of missing data in minority groups. Some states may think that few people care about data from minority groups and are not willing to devote much attention and labor force to collect data from them. Or the population of those minority groups in those states are too small, hence they ignored it.
 
 ```{r preprocess, warning=FALSE}
 # pick up interested variables
@@ -132,6 +132,7 @@ latest <- latest[, highest_DR :=
           )), by = State]
 ```
 
+Because of different population base in each state, the original counts of deaths and cases may be not very meaningful to analyze, so I choose to calculate death rate instead.
 
 # Preliminary Results
 ## COVID-19 Death rate of different races in United States
@@ -202,6 +203,7 @@ leaflet() %>%
     ) 
 ```
 
+Generally it shows a radial pattern: the middle part has a lowest death rate and gradually become higher while approching to the coastline. And total death rate of the eastern and north-eastern area is highest. Relatively higher population and more samples of those states along the coastline may lead to greater burden of medical system, and finally lead to a higher death rate. Also, there are more international transportation for those states along the coastline, which may bring in more cases and deaths of COVID-19.
 
 ```{r remove TX}
 latest <- latest[!State=="TX"]
@@ -243,9 +245,10 @@ leaflet() %>%
     ) 
 ```
 
+The patterns of death rate in those three maps with different races are similar to the pattern of total death rate. The difference such as high death rate of black in Michigan, high death rate of asian in California and Hawaii is caused by relatively higher population of such races in those states, which provides more data.
 
 # Conclusion
-Just from these data, I think there is no clear association between races and death rate of COVID-19. Both in CA and country level, the death rate of all three races approach to the same level finally. And for top5 states with highest death rate in each race, TX is top1 of all three races and MA, NJ, CT, PA, MI also appear more than one time. Hence, in my opinion, the death rate is highly depend on the action of the State rather than races, for example, the burden of medical system, the policy to restrict COVID-19 etc. Although the number of states with DR_white to be the highest DR among three races is greatest (30), the difference among average DR is not that so great. This probably is caused by samples collection. The majority of United States population is white, hence the data collected in white might be greater, leading to a relatively higher DR.
+Just from these data, I think there is no clear association between races and death rate of COVID-19. Both in CA and country level, the death rate of all three races approach to the same level finally. In my opinion, the death rate is highly depend on the action of the State rather than races, for example, the burden of medical system, the policy to restrict COVID-19 etc. 
 I saw a lot of data showed a different result from these data, which indicated that death rate of black is highest among all races. That might be caused by inequality of medical distribution at the stage of onset of COVID-19. As the burden of medical resource relieved and government took action to restrict COVID-19 and gave supports to citizens, I believe that death rate that approaches to the same level is a right trend.
 
 
