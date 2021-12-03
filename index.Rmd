@@ -1,6 +1,6 @@
 ---
 title: "PM566 Final Project"
-author: "Your Name"
+author: "Nicky Nie"
 output: 
     html_document:
         toc: TRUE
@@ -11,18 +11,15 @@ output:
 
 This is my PM566 Final Project website. I will showcase a few interactive visuals here.
 
-(Your output should look something like this)
-
 <br>
 
 ```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
 
 library(data.table)
-library(tidyverse)
 library(dplyr)
-library(plotly)
-library(DT)
-library(knitr)
+library(tidyverse)
+library(ggforce)
+library(leaflet)
 
 # Initialize code chunk options
 opts_chunk$set(
@@ -50,73 +47,239 @@ opts_chunk$set(
 
 <br>
 
-## First step
+# Introduction
+This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/deaths of COVID-19 catrgotized by races for each state in United States. The data was collected from April 12, 2020 to March 07, 2021. 
 
-First I will source any necessary code, e.g. `process_covid_data.R`:
+<br>
 
-```{r load-data}
-source("process_COVID_data.R")
+## Main Question: Is death from COVID-19 associated with races?
+
+#### Sub Questions:
+#### 1.Are the trends of incidence/death of different races same across the year in the country level?
+#### 2.Is the trend in CA similar to that in the country level?
+#### 3.What are top 5 states with highest death rate from COVID-19 for different races?
+#### 4.Which race with highest death rate in each state?
+
+<br>
+
+# Method
+
+<br>
+
+### Download data
+I download data in csv form from The COVID Tracking Project https://covidtracking.com/race
+And dataset of latitude and longitude of each state is download from kaggle
+https://www.kaggle.com/washimahmed/usa-latlong-for-state-abbreviations
+```{r download}
+race <- fread("CRDT.csv")
+state_map <- fread("statelatlong.csv")
 ```
 
 <br>
 
-## Second step
+### Preprocessing data
 
-Then I will add some code to create the **plotly** figures
-
-Note: You need to name each code chunk, like this one: `plot1`
-
-```{r plot1, class.source="code-r-small"}
-
-p1_scatter <- cv_states_today %>% 
-  plot_ly(x = ~pop_density, y = ~deathsper100k,
-          type = 'scatter', mode = 'markers', color = ~state,
-          size = ~population, sizes = c(5, 70), marker = list(sizemode='diameter', opacity=0.5),
-          hoverinfo = 'text',
-          text = ~paste( paste(state, ":", sep=""), paste(" Cases per 100k: ", per100k, sep="") , paste(" Deaths per 100k: ",
-                        deathsper100k, sep=""), sep = "<br>")) %>%
-  layout(title = "Population-normalized COVID-19 deaths vs. population density",
-                  yaxis = list(title = "Deaths per 100k"), xaxis = list(title = "Population Density"),
-         hovermode = "compare")
-
-# filter out "District of Columbia"
-cv_states_today_scatter <- cv_states_today %>% filter(state!="District of Columbia")
-
-p2_scatter <- cv_states_today_scatter %>% 
-  plot_ly(x = ~pop_density, y = ~deathsper100k,
-          type = 'scatter', mode = 'markers', color = ~state,
-          size = ~population, sizes = c(5, 70), marker = list(sizemode='diameter', opacity=0.5),
-          hoverinfo = 'text',
-          text = ~paste( paste(state, ":", sep=""), paste(" Cases per 100k: ", per100k, sep="") , paste(" Deaths per 100k: ",
-                        deathsper100k, sep=""), sep = "<br>")) %>%
-  layout(title = "Population-normalized COVID-19 deaths vs. population density",
-                  yaxis = list(title = "Deaths per 100k"), xaxis = list(title = "Population Density"),
-         hovermode = "compare")
+```{r look at NAs}
+tab <- race[, .(
+Total_objects = nrow(race),
+NA_total = sum(is.na(race$Cases_Total)),
+NA_white = sum(is.na(race$Cases_White)),
+NA_black = sum(is.na(race$Cases_Black)),
+NA_latinx = sum(is.na(race$Cases_Latinx)),
+NA_asian = sum(is.na(race$Cases_Asian)),
+NA_AIAN = sum(is.na(race$Cases_AIAN)),
+NA_NHPI = sum(is.na(race$Cases_NHPI)),
+NA_multi = sum(is.na(race$Cases_Multiracial))
+)]
+knitr::kable(tab)
 ```
 
 <br>
 
-## Third step {.tabset}
+Based on this table, I decided to take a close look at data of Total, White, Black and Asian since races like Latinx, AIAN, NHPI and multiracial have almost half of missing data, which is not suitable for further analysis. And for the three races categories left, I dropped all the NAs for further analysis. 
 
-Create tabs to display each figure
+I firstly created two new datasets, one is based on state(race_state) and another(race_country) is based on country. Then I calculated death rates based on races of each dataset. I also created a dataset of CA to see if pattern in CA is similar to the pattern of the whole country. And since the number of cases and deaths are cumulative, I chose the latest data(2021.03.07) and created a new dataset called "latest" to find the race with highest death rate in each state.
 
-### Scatterplot: with DC
+```{r preprocess, warning=FALSE}
+# pick up interested variables
+race_state <- unique(race[,.(Date,State,Cases_Total,Cases_White,Cases_Black,Cases_Asian,Deaths_Total,Deaths_White,Deaths_Black,Deaths_Asian)])
+# since date here shows to be integer, I changed them into str
+race_state$Date = as.Date(as.character(race$Date),"%Y%m%d")
 
-```{r p1}
-p1_scatter
+# drop NAs
+race_state <- race_state[!is.na(Cases_Total) & !is.na(Cases_White) & !is.na(Cases_Black) & !is.na(Cases_Asian) & !is.na(Deaths_Total) & !is.na(Deaths_White) & !is.na(Deaths_Black) & !is.na(Deaths_Asian)]
+sum(is.na(race_state))
+
+# Calculate total cases of different races based on date
+race_country <- race_state[,.(
+  Case_total  = sum(Cases_Total),
+  Case_white  = sum(Cases_White),
+  Case_black  = sum(Cases_Black),
+  Case_asian  = sum(Cases_Asian),
+  Death_total = sum(Deaths_Total),
+  Death_white = sum(Deaths_White),
+  Death_black = sum(Deaths_Black),
+  Death_asian = sum(Deaths_Asian)
+), by = Date]
+
+# Calculate death rate
+race_state  [, DR_total := Deaths_Total/Cases_Total]
+race_state  [, DR_white := Deaths_White/Cases_White]
+race_state  [, DR_black := Deaths_Black/Cases_Black]
+race_state  [, DR_asian := Deaths_Asian/Cases_Asian]
+race_country[, DR_total := Death_total/Case_total]
+race_country[, DR_white := Death_white/Case_white]
+race_country[, DR_black := Death_black/Case_black]
+race_country[, DR_asian := Death_asian/Case_asian]
+
+# Stick to CA data
+CA <- filter(race_state, State == "CA")
+
+# Race with highest DR in each state.
+latest <- filter(race_state, Date == "2021-03-07")
+latest <- latest[, highest_DR := 
+         fifelse(DR_white == max(DR_white,DR_black,DR_asian),"White",
+          fifelse(DR_black == max(DR_white,DR_black,DR_asian),"Black","Asian"
+          )), by = State]
 ```
-
-### Scatterplot: without DC
-
-```{r p2}
-p2_scatter
-```
-
-## {-}
 
 <br>
 
-Done!
+# Preliminary Results
+```{r country}
+ggplot(data = race_country) + 
+  geom_smooth(mapping = aes(x = Date, y = DR_white, color = "DR_white"))+
+  geom_smooth(mapping = aes(x = Date, y = DR_black, color = "DR_black"))+
+  geom_smooth(mapping = aes(x = Date, y = DR_asian, color = "DR_asian"))+
+  geom_smooth(mapping = aes(x = Date, y = DR_total,color = "DR_total"))+
+  labs(x = "Month", y = "Death Rate")+
+  labs(title = "COVID-19 Death rate of different races in United States")+
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))+
+  scale_x_date(date_breaks = "months" , date_labels = "%b-%y")
+```
+
+From this graph, we can see that the trend of all DR is gradually decreasing, the total death rate is always the lowest one since there are a lot of cases of other or unknown races which largely increase the denominator. And although death rate of white is higher than the other two races initially, they approach to the same level finally with a little bit of difference.
+
+```{r CA}
+ggplot(data = CA) + 
+  geom_smooth(mapping = aes(x = Date, y = DR_white, color = "DR_white"))+
+  geom_smooth(mapping = aes(x = Date, y = DR_black, color = "DR_black"))+
+  geom_smooth(mapping = aes(x = Date, y = DR_asian, color = "DR_asian"))+
+  geom_smooth(mapping = aes(x = Date, y = DR_total,color = "DR_total"))+
+  labs(x = "Month", y = "Death Rate")+
+  labs(title = "COVID-19 Death rate of different races in California")+
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))+
+  scale_x_date(date_breaks = "months" , date_labels = "%b-%y")
+```
+
+The general trend is similar to that of country but it seems that four lines go up slightly at last. But we can still see a trend of DR of three races approaching to the same level at the final stage of the data.
+
+```{r top5}
+top5_total <- latest[order(DR_total,decreasing = TRUE)][1:5]
+top5_white <- latest[order(DR_white,decreasing = TRUE)][1:5]
+top5_black <- latest[order(DR_black,decreasing = TRUE)][1:5]
+top5_asian <- latest[order(DR_asian,decreasing = TRUE)][1:5]
+```
+
+The top5 states with highest death rate of total are  `r top5_total$State`
+
+The top5 states with highest death rate of white are  `r top5_white$State`
+
+The top5 states with highest death rate of black are  `r top5_black$State`
+
+The top5 states with highest death rate of asian are  `r top5_asian$State`
+
+```{r}
+tab <- latest[, .(
+  State = State,
+  DR_total = DR_total,
+  DR_white = DR_white,
+  DR_black = DR_black,
+  DR_asian = DR_asian
+)]
+
+knitr::kable(tab)
+```
+
+```{r table}
+tab <- latest[, .(
+  N_states  = .N,
+  avg_DR_white = mean(DR_white),
+  avg_DR_black = mean(DR_black),
+  avg_DR_asian = mean(DR_asian)
+), by = highest_DR]
+
+knitr::kable(tab)
+```
+
+```{r merge}
+latest <- merge(
+  x     = latest,
+  y     = state_map,
+  by  = "State",
+  all.x = TRUE,
+  all.y = FALSE
+)
+```
+
+
+
+```{r drtotal}
+pal = colorNumeric(c('green','red'), domain=latest$DR_total)
+leaflet() %>% 
+  addProviderTiles('CartoDB.Positron') %>% 
+  addCircles(
+    data = latest,
+    lat = ~Latitude, lng = ~Longitude, 
+    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(latest$DR_total)
+    ) 
+```
+
+Looking back to the table of death rate in each state, I find that Texas has a ridiculous result in death rate of white(0.7144365) death rate of black(0.3355429) and death rate of asian	(0.9624866), which is abnormally high. So I think that there must be some problems in this data and hence I delete the data of Texas when I draw the map.
+
+```{r remove TX}
+latest <- latest[!State=="TX"]
+```
+
+```{r drwhite}
+pal = colorNumeric(c('green','red'), domain=latest$DR_white)
+leaflet() %>% 
+  addProviderTiles('CartoDB.Positron') %>% 
+  addCircles(
+    data = latest,
+    lat = ~Latitude, lng = ~Longitude, 
+    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(latest$DR_white)
+    ) 
+```
+
+```{r drblack}
+pal = colorNumeric(c('green','red'), domain=latest$DR_black)
+leaflet() %>% 
+  addProviderTiles('CartoDB.Positron') %>% 
+  addCircles(
+    data = latest,
+    lat = ~Latitude, lng = ~Longitude, 
+    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(latest$DR_black)
+    ) 
+```
+
+```{r drasian}
+pal = colorNumeric(c('green','red'), domain=latest$DR_asian)
+leaflet() %>% 
+  addProviderTiles('CartoDB.Positron') %>% 
+  addCircles(
+    data = latest,
+    lat = ~Latitude, lng = ~Longitude, 
+    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(latest$DR_asian)
+    ) 
+```
+
+<br>
+
+# Conclusion
+Just from these data, I think there is no clear association between races and death rate of COVID-19. Both in CA and country level, the death rate of all three races approach to the same level finally. And for top5 states with highest death rate in each race, TX is top1 of all three races and MA, NJ, CT, PA, MI also appear more than one time. Hence, in my opinion, the death rate is highly depend on the action of the State rather than races, for example, the burden of medical system, the policy to restrict COVID-19 etc. Although the number of states with DR_white to be the highest DR among three races is greatest (30), the difference among average DR is not that so great. This probably is caused by samples collection. The majority of United States population is white, hence the data collected in white might be greater, leading to a relatively higher DR.
+I saw a lot of data showed a different result from these data, which indicated that death rate of black is highest among all races. That might be caused by inequality of medical distribution at the stage of onset of COVID-19. As the burden of medical resource relieved and government took action to restrict COVID-19 and gave supports to citizens, I believe that death rate that approaches to the same level is a right trend.
+
 
 <br>
 <br>
