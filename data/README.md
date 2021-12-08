@@ -1,0 +1,2 @@
+CRDT.csv is the major data I used in this project, which is downloaded from COVID Tracking Project https://covidtracking.com/race
+statelatlong.csv is dataset of latitude and longitude of each state is download from kaggle https://www.kaggle.com/washimahmed/usa-latlong-for-state-abbreviations
