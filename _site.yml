@@ -1,7 +1,7 @@
 name: "my-website"
 output_dir: "."
 navbar:
-  title: "PM566 Final Project"
+  title: "COVID-19 and Races in United States"
   left:
     - text: "Final Project"
       href: index.html

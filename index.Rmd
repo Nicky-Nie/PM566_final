@@ -1,5 +1,5 @@
 ---
-title: "PM566 Final Project"
+title: "COVID-19 and Races"
 author: "Nicky Nie"
 output: 
     html_document:
@@ -49,7 +49,8 @@ opts_chunk$set(
 
 <br>
 
-# Introduction of dataset
+# Introduction
+America is a smelting furnace of different races. The racial diversity brings in communication between different cultures, but also results in conflicts between them. Racism has been a great problem in America for a long time. With the pandemic, the racism violence increased a lot. For example, COVID-19 was called "Chinese Virus" from some racists, and more people were hostile to all the Asians they saw in the street. I even saw some Asian YouTubers being splashed water and even being beaten when they were doing live streaming. This project aims to study in association between COVID-19 and races.
 This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/deaths of COVID-19 categorized by races for each state in United States. The data was collected from April 12, 2020 to March 07, 2021. 
 
 
