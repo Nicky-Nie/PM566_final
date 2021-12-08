@@ -1,6 +1,6 @@
 ---
-title: "COVID-19 and Races"
-author: "Nicky Nie"
+title: "Association between COVID-19 and Races in The United States"
+author: "Nicky Nie nq990124@gmail.com"
 output: 
     html_document:
         toc: TRUE
@@ -14,7 +14,7 @@ This is my PM566 Final Project website. I will showcase major finding in report 
 <br>
 
 ```{r setup, message=FALSE, echo=FALSE, warning=FALSE, results='hide'}
-
+options(scipen = 1, digits = 3)
 library(data.table)
 library(dplyr)
 library(tidyverse)
@@ -49,21 +49,18 @@ opts_chunk$set(
 
 <br>
 
-# Introduction
+# **Introduction**
 America is a smelting furnace of different races. The racial diversity brings in communication between different cultures, but also results in conflicts between them. Racism has been a great problem in America for a long time. With the pandemic, the racism violence increased a lot. For example, COVID-19 was called "Chinese Virus" from some racists, and more people were hostile to all the Asians they saw in the street. I even saw some Asian YouTubers being splashed water and even being beaten when they were doing live streaming. This project aims to study in association between COVID-19 and races.
 This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/deaths of COVID-19 categorized by races for each state in United States. The data was collected from April 12, 2020 to March 07, 2021. 
 
 
-## Main Question: Is death from COVID-19 associated with races?
-
-
-# Method
+# **Method**
 
 
 ### Download data
 I download data in csv form from The COVID Tracking Project https://covidtracking.com/race
 ```{r message=FALSE, echo=FALSE, warning=FALSE, results='hide',fig.show='hide'}
-race <- fread("CRDT.csv")
+race <- fread("data/CRDT.csv")
 ```
 
 
@@ -134,8 +131,7 @@ latest <- latest[, highest_DR :=
 
 Because of different population base in each state, the original counts of deaths and cases may be not very meaningful to analyze, so I choose to calculate death rate instead.
 
-# Preliminary Results
-## COVID-19 Death rate of different races in United States
+# **Preliminary Results**
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE}
 ggplot(data = race_country) + 
@@ -263,7 +259,7 @@ Generally it shows a radial pattern: the middle part has a lowest death rate and
 
 The patterns of death rate in those three maps with different races are similar to the pattern of total death rate. The difference such as high death rate of black in Michigan, high death rate of asian in California and Hawaii is caused by relatively higher population of such races in those states, which provides more data.
 
-# Conclusion
+# **Conclusion**
 Just from these data, I think there is no clear association between races and death rate of COVID-19. The death rate of all three races approach to the same level finally. In my opinion, the death rate is highly depend on the action of the State rather than races, for example, the burden of medical system, the policy to restrict COVID-19 etc. 
 I saw a lot of data showed a different result from these data, which indicated that death rate of black is highest among all races. That might be caused by inequality of medical distribution at the stage of onset of COVID-19. As the burden of medical resource relieved and government took action to restrict COVID-19 and gave supports to citizens, I believe that death rate that approaches to the same level is a right trend.
 
